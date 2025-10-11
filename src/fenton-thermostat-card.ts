@@ -187,3 +187,4 @@ declare global {
     'fenton-thermostat-card': FentonThermostatCard;
   }
 }
+customElements.define('fenton-thermostat-card', FentonThermostatCard);

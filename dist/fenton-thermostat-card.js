@@ -171,3 +171,4 @@ FentonThermostatCard = __decorate([
     customElement('fenton-thermostat-card')
 ], FentonThermostatCard);
 export { FentonThermostatCard };
+customElements.define('fenton-thermostat-card', FentonThermostatCard);
