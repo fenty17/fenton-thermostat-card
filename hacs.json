@@ -4,6 +4,6 @@
   "type": "module",
   "keywords": ["lovelace", "thermostat", "custom card"],
   "domain": "fenton_thermostat_card",
-  "codeowners": ["@yourgithubusername"],
+  "codeowners": ["@fenty17"],
   "version": "0.1.0"
 }
