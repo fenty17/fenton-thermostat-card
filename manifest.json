@@ -1,0 +1,21 @@
+{
+  "type": "module",
+  "name": "Fenton Thermostat Card",
+  "author": "Your Name or GitHub Username",
+  "description": "A compact custom Home Assistant thermostat card built with Lit.",
+  "keywords": [
+    "lovelace",
+    "custom-card",
+    "thermostat",
+    "lit"
+  ],
+  "version": "0.1.0",
+  "documentation": "https://github.com/fenty17/fenton-thermostat-card",
+  "repository": "https://github.com/fenty17/fenton-thermostat-card",
+  "resources": [
+    {
+      "url": "dist/fenton-thermostat-card.js",
+      "type": "module"
+    }
+  ]
+}
