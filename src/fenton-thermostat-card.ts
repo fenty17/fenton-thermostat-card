@@ -143,39 +143,22 @@ export class FentonThermostatCard extends LitElement {
       overflow: hidden;
     }
     .arrow-btn {
+      color: #fff;
       background: none;
       border: none;
-      width: 100%;
-      height: 3.4em;
-      min-height: 64px;
-      max-height: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      font-size: 2.3rem;
       cursor: pointer;
+      width: 100%;
+      flex: 1;
+      min-height: 0;
       padding: 0;
-      margin: 0;
       transition: color 0.2s;
       border-radius: 0;
-      flex: 0 0 auto;
-      outline: none;
-      --arrow-size: 3.2em;
-      color: #fff;
+      margin: 0;
     }
-    .arrow-btn:active svg polygon,
-    .arrow-btn:focus svg polygon {
-      fill: #ffe082;
+    .arrow-btn:active {
+      color: #ffe082;
     }
-    .arrow-svg {
-      display: block;
-      width: var(--arrow-size);
-      height: var(--arrow-size);
-      max-width: 100%;
-      max-height: 100%;
-      margin: 0 auto;
-      pointer-events: none;
-    }
-
     .temp-target {
       font-size: 2.5rem;
       font-weight: bold;
@@ -192,11 +175,10 @@ export class FentonThermostatCard extends LitElement {
       background: none;
       width: 100%;
     }
-
     .bottom-bar {
       display: flex;
       flex-direction: row;
-      align-items: stretch;
+      align-items: center; /* Vertically align items in the middle */
       width: 100%;
       margin-top: 2px;
       box-sizing: border-box;
@@ -216,7 +198,6 @@ export class FentonThermostatCard extends LitElement {
       margin: 0;
       padding-left: 16px;
       flex: 0 0 auto;
-      /* Vertically center in bar */
     }
     .boost-btns-area {
       display: flex;
@@ -227,7 +208,6 @@ export class FentonThermostatCard extends LitElement {
       gap: 27px;
       margin-left: 22px;
       min-width: 0;
-      flex-wrap: wrap;
     }
     .boost-btn {
       background: #353535;
@@ -246,7 +226,6 @@ export class FentonThermostatCard extends LitElement {
       display: flex;
       align-items: center;
       justify-content: center;
-      flex: 0 1 120px;
       box-sizing: border-box;
       word-break: keep-all;
     }
@@ -257,7 +236,6 @@ export class FentonThermostatCard extends LitElement {
       background: none;
       border: 2px solid #fa3333;
     }
-    /* Responsive: make boost btns wrap, shrink, prevent overflow */
     @media (max-width: 768px) {
       .card { padding: 3vw; }
       .thermostat-outer { min-width: 90px; }
@@ -281,8 +259,7 @@ export class FentonThermostatCard extends LitElement {
       .boost-btn {
         font-size: 1rem;
         min-width: 41px;
-        padding: 12px 7px;
-        flex-basis: 70px;
+        padding: 14px 10px;
       }
     }
     @media (max-width: 480px) {
@@ -291,16 +268,8 @@ export class FentonThermostatCard extends LitElement {
       .row { gap: 2vw; }
       .status-side { padding-left: 3vw;}
       .boost-label { padding-left: 3vw; }
-      .boost-btns-area {
-        gap: 5px;
-        margin-left: 2px;
-      }
-      .boost-btn {
-        font-size: 0.97rem;
-        min-width: 34px;
-        padding: 9px 2px;
-        flex-basis: 40px;
-      }
+      .boost-btns-area { gap: 5px; margin-left: 2px; }
+      .boost-btn { font-size: 0.97rem; min-width: 34px; padding: 14px 5px;}
       .thermostat-controls {
         min-width: 0;
         width: 100%;
@@ -309,10 +278,6 @@ export class FentonThermostatCard extends LitElement {
         min-height: 0;
         margin-right: 0;
       }
-    }
-    .boost-btns-area {
-      /* force wrap and prevent overflow at all times*/
-      flex-wrap: wrap;
     }
   `;
 
@@ -355,18 +320,6 @@ export class FentonThermostatCard extends LitElement {
   }
   private _thermoIconColor() {
     return this._heatingOn() ? "orange" : "#888";
-  }
-
-  // SVGs for big up/down arrows (outline triangles, always visible and scale)
-  private _arrowSVG(direction: "up" | "down") {
-    return html`
-      <svg class="arrow-svg" viewBox="0 0 100 100">
-        ${direction === "up"
-          ? html`<polygon points="50,15 95,75 5,75" fill="currentColor" />`
-          : html`<polygon points="5,25 95,25 50,85" fill="currentColor" />`
-        }
-      </svg>
-    `;
   }
 
   render() {
@@ -430,7 +383,7 @@ export class FentonThermostatCard extends LitElement {
           <div class="thermostat-outer">
             <div class="thermostat-controls">
               <button class="arrow-btn" @click=${() => this._setTemp(1)} aria-label="Increase temperature">
-                ${this._arrowSVG("up")}
+                <ha-icon icon="mdi:chevron-up"></ha-icon>
               </button>
               <div class="temp-target"
                    tabindex="0"
@@ -444,7 +397,7 @@ export class FentonThermostatCard extends LitElement {
                   : "19.0"}°C
               </div>
               <button class="arrow-btn" @click=${() => this._setTemp(-1)} aria-label="Decrease temperature">
-                ${this._arrowSVG("down")}
+                <ha-icon icon="mdi:chevron-down"></ha-icon>
               </button>
             </div>
           </div>
