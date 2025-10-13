@@ -176,10 +176,10 @@ const at={attribute:!0,type:String,converter:b,reflect:!1,hasChanged:$},lt=(t=at
       flex-direction: column;
       align-items: stretch;
       justify-content: flex-start;
-      min-width: 130px;
-      min-height: 130px;
+      min-width: 160px;
+      min-height: 160px;
       height: 100%;
-      margin-right: 20px;
+      margin: 20px 20px 0 0;
     }
     .thermostat-controls {
       width: 100%;
@@ -205,7 +205,7 @@ const at={attribute:!0,type:String,converter:b,reflect:!1,hasChanged:$},lt=(t=at
       color: #fff;
       background: none;
       border: none;
-      font-size: 2.3rem;
+      font-size: 1.3rem;
       cursor: pointer;
       width: 100%;
       flex: 1;

@@ -117,10 +117,10 @@ export class FentonThermostatCard extends LitElement {
       flex-direction: column;
       align-items: stretch;
       justify-content: flex-start;
-      min-width: 130px;
-      min-height: 130px;
+      min-width: 160px;
+      min-height: 160px;
       height: 100%;
-      margin-right: 20px;
+      margin: 20px 20px 0 0;
     }
     .thermostat-controls {
       width: 100%;
@@ -146,7 +146,7 @@ export class FentonThermostatCard extends LitElement {
       color: #fff;
       background: none;
       border: none;
-      font-size: 2.3rem;
+      font-size: 1.3rem;
       cursor: pointer;
       width: 100%;
       flex: 1;
