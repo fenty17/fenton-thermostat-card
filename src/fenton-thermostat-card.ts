@@ -119,61 +119,75 @@ export class FentonThermostatCard extends LitElement {
       justify-content: flex-start;
       min-width: 130px;
       min-height: 130px;
-      height: 100%;
       margin-right: 20px;
     }
     .thermostat-controls {
+      position: relative;
       width: 100%;
-      box-sizing: border-box;
+      aspect-ratio: 1/1;
       background: #232323;
       border-radius: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      justify-content: center;
-      aspect-ratio: 1/1;
-      flex: 1 1 auto;
       min-width: 120px;
       min-height: 120px;
       max-width: 305px;
       max-height: 500px;
-      margin-left: 0;
-      margin-top: 0;
-      margin-bottom: 0;
+      margin: 0;
+      box-sizing: border-box;
       overflow: hidden;
+      display: block;
     }
     .arrow-btn {
+      position: absolute;
+      left: 0; right: 0;
+      width: 100%;
       color: #fff;
       background: none;
       border: none;
       font-size: 2.3rem;
       cursor: pointer;
-      width: 100%;
-      flex: 1;
-      min-height: 0;
-      padding: 0;
       transition: color 0.2s;
       border-radius: 0;
-      margin: 0;
-    }
-    .arrow-btn:active {
-      color: #ffe082;
-    }
-    .temp-target {
-      font-size: 2.5rem;
-      font-weight: bold;
-      flex: 1 1 auto;
+      z-index: 3;
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 0;
+      margin: 0;
+      padding: 0;
+      /* Make tap zones larger: */
+      min-height: 56px;
+      height: 19%;
+    }
+    .arrow-btn--up {
+      top: 0;
+      /* Don't let the click/tap area overlap the target temp */
+    }
+    .arrow-btn--down {
+      bottom: 0;
+    }
+    .arrow-btn:active, .arrow-btn:focus {
+      color: #ffe082;
+    }
+    .temp-target {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      letter-spacing: 1px;
       cursor: pointer;
       user-select: none;
-      letter-spacing: 1px;
       outline: none;
       border: none;
       background: none;
       width: 100%;
+      height: 100%;
+      z-index: 2;
+      margin: 0;
     }
     .bottom-bar {
       display: grid;
@@ -202,9 +216,11 @@ export class FentonThermostatCard extends LitElement {
     .boost-btns-area {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 24px;
+      gap: 18px;
       width: 100%;
-      padding-left: 22px;
+      padding-left: 16px;
+      padding-right: 10px; /* Padding from right edge */
+      box-sizing: border-box;
     }
     .boost-btn {
       background: #353535;
@@ -225,7 +241,7 @@ export class FentonThermostatCard extends LitElement {
       justify-content: center;
       box-sizing: border-box;
       word-break: keep-all;
-      width: 100%; /* Fill grid cell */
+      width: 100%;
     }
     .boost-btn[boost="60"] { color: orange;}
     .boost-btn[boost="hw"] { color: darkorange;}
@@ -236,12 +252,15 @@ export class FentonThermostatCard extends LitElement {
     }
     @media (max-width: 670px) {
       .boost-btns-area {
-        gap: 12px;
+        gap: 10px;
+        padding-right: 5px;
       }
     }
     @media (max-width: 570px) {
       .boost-btns-area {
-        gap: 7px;
+        gap: 6px;
+        padding-left: 7px;
+        padding-right: 1vw;
       }
       .card { padding: 2vw; }
       .bottom-bar { font-size: 0.95rem;}
@@ -250,13 +269,16 @@ export class FentonThermostatCard extends LitElement {
       .boost-btns-area {
         grid-template-columns: repeat(2, 1fr);
         row-gap: 10px;
+        padding-left: 4px;
+        padding-right: 3px;
       }
     }
     @media (max-width: 400px) {
       .boost-btns-area {
         grid-template-columns: 1fr;
         gap: 8px;
-        padding-left: 4px;
+        padding-left: 2px;
+        padding-right: 2px;
       }
     }
     @media (max-width: 768px) {
@@ -303,25 +325,13 @@ export class FentonThermostatCard extends LitElement {
     return this.hass.states[entity]?.attributes[attr];
   }
 
-  private _haptic(feedback: "light" | "medium" | "heavy" = "light") {
-    // @ts-ignore
-    if (window.navigator && "vibrate" in window.navigator) {
-      if (feedback === "light")  window.navigator.vibrate(10);
-      else if (feedback === "medium") window.navigator.vibrate([10, 20]);
-      else if (feedback === "heavy") window.navigator.vibrate([20, 40]);
-    }
-    // For Home Assistant companion app:
-    // @ts-ignore
-    if (window?.haptic) window.haptic(feedback);
-    // For HA frontend's fireHaptic
-    // @ts-ignore
-    if (typeof window?.fireEvent === "function") {
-      // Sends to global haptic handler in HA (where available)
-      try {
-        // @ts-ignore
-        window.fireEvent("haptic", feedback);
-      } catch {}
-    }
+  private _haptic(type: "light" | "medium" | "heavy" = "light") {
+    // Standard Home Assistant haptic event (works on mobile app! web UI fallback too)
+    window.dispatchEvent(
+      new CustomEvent("hass-haptic", {
+        detail: { haptic: type }
+      })
+    );
   }
 
   private _setTemp(dir: 1|-1) {
@@ -416,7 +426,8 @@ export class FentonThermostatCard extends LitElement {
           </div>
           <div class="thermostat-outer">
             <div class="thermostat-controls">
-              <button class="arrow-btn" @click=${() => this._setTemp(1)} aria-label="Increase temperature">
+              <button class="arrow-btn arrow-btn--up"
+                @click=${() => this._setTemp(1)} aria-label="Increase temperature">
                 <ha-icon icon="mdi:chevron-up"></ha-icon>
               </button>
               <div class="temp-target"
@@ -430,7 +441,8 @@ export class FentonThermostatCard extends LitElement {
                   ? Number(currentTemp).toFixed(1)
                   : "19.0"}°C
               </div>
-              <button class="arrow-btn" @click=${() => this._setTemp(-1)} aria-label="Decrease temperature">
+              <button class="arrow-btn arrow-btn--down"
+                @click=${() => this._setTemp(-1)} aria-label="Decrease temperature">
                 <ha-icon icon="mdi:chevron-down"></ha-icon>
               </button>
             </div>
