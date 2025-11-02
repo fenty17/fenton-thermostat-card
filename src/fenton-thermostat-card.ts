@@ -16,10 +16,10 @@ interface FentonThermostatCardConfig extends LovelaceCardConfig {
   hotwater_state_entity: string;
   boost_state_entity: string;
   hw_boost_state_entity: string;
-  boost_30_script: string;
-  boost_60_script: string;
-  hw_boost_script: string;
-  cancel_script: string;
+  boost_30_button: string;
+  boost_60_button: string;
+  hw_boost_button: string;
+  cancel_boost_button: string;
 }
 
 @customElement('fenton-thermostat-card')
@@ -117,10 +117,10 @@ export class FentonThermostatCard extends LitElement {
       flex-direction: column;
       align-items: stretch;
       justify-content: flex-start;
-      min-width: 160px;
-      min-height: 160px;
+      min-width: 130px;
+      min-height: 130px;
       height: 100%;
-      margin: 20px 20px 0 0;
+      margin-right: 20px;
     }
     .thermostat-controls {
       width: 100%;
@@ -146,7 +146,7 @@ export class FentonThermostatCard extends LitElement {
       color: #fff;
       background: none;
       border: none;
-      font-size: 1.3rem;
+      font-size: 2.3rem;
       cursor: pointer;
       width: 100%;
       flex: 1;
@@ -176,9 +176,9 @@ export class FentonThermostatCard extends LitElement {
       width: 100%;
     }
     .bottom-bar {
-      display: flex;
-      flex-direction: row;
-      align-items: center; /* Vertically align items in the middle */
+      display: grid;
+      grid-template-columns: max-content 1fr;
+      align-items: center;
       width: 100%;
       margin-top: 2px;
       box-sizing: border-box;
@@ -200,14 +200,11 @@ export class FentonThermostatCard extends LitElement {
       flex: 0 0 auto;
     }
     .boost-btns-area {
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      flex: 1 1 0;
-      gap: 27px;
-      margin-left: 22px;
-      min-width: 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      width: 100%;
+      padding-left: 22px;
     }
     .boost-btn {
       background: #353535;
@@ -228,6 +225,7 @@ export class FentonThermostatCard extends LitElement {
       justify-content: center;
       box-sizing: border-box;
       word-break: keep-all;
+      width: 100%; /* Fill grid cell */
     }
     .boost-btn[boost="60"] { color: orange;}
     .boost-btn[boost="hw"] { color: darkorange;}
@@ -236,11 +234,34 @@ export class FentonThermostatCard extends LitElement {
       background: none;
       border: 2px solid #fa3333;
     }
+    @media (max-width: 670px) {
+      .boost-btns-area {
+        gap: 12px;
+      }
+    }
+    @media (max-width: 570px) {
+      .boost-btns-area {
+        gap: 7px;
+      }
+      .card { padding: 2vw; }
+      .bottom-bar { font-size: 0.95rem;}
+    }
+    @media (max-width: 520px) {
+      .boost-btns-area {
+        grid-template-columns: repeat(2, 1fr);
+        row-gap: 10px;
+      }
+    }
+    @media (max-width: 400px) {
+      .boost-btns-area {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding-left: 4px;
+      }
+    }
     @media (max-width: 768px) {
-      .card { padding: 3vw; }
       .thermostat-outer { min-width: 90px; }
       .thermostat-controls { min-width: 90px; }
-      .boost-btns-area { gap: 14px; }
     }
     @media (max-width: 600px) {
       .row {
@@ -249,27 +270,10 @@ export class FentonThermostatCard extends LitElement {
         gap: 6vw;
       }
       .status-side { padding-left: 7px;}
-      .thermostat-outer {
-        min-width: 68px;
-      }
+      .thermostat-outer { min-width: 68px; }
       .sensor-label { font-size: 0.98rem; }
       .sensor-value { font-size: 1.09rem; }
       .boost-label { padding-left: 7px; font-size: 0.93rem;}
-      .boost-btns-area { gap: 8px; margin-left: 10px;}
-      .boost-btn {
-        font-size: 1rem;
-        min-width: 41px;
-        padding: 14px 10px;
-      }
-    }
-    @media (max-width: 480px) {
-      .card { padding: 2vw; }
-      .thermostat-outer { min-width: 56px;}
-      .row { gap: 2vw; }
-      .status-side { padding-left: 3vw;}
-      .boost-label { padding-left: 3vw; }
-      .boost-btns-area { gap: 5px; margin-left: 2px; }
-      .boost-btn { font-size: 0.97rem; min-width: 34px; padding: 14px 5px;}
       .thermostat-controls {
         min-width: 0;
         width: 100%;
@@ -278,6 +282,13 @@ export class FentonThermostatCard extends LitElement {
         min-height: 0;
         margin-right: 0;
       }
+    }
+    @media (max-width: 480px) {
+      .card { padding: 2vw; }
+      .thermostat-outer { min-width: 56px;}
+      .row { gap: 2vw; }
+      .status-side { padding-left: 3vw;}
+      .boost-label { padding-left: 3vw;}
     }
   `;
 
@@ -292,7 +303,29 @@ export class FentonThermostatCard extends LitElement {
     return this.hass.states[entity]?.attributes[attr];
   }
 
+  private _haptic(feedback: "light" | "medium" | "heavy" = "light") {
+    // @ts-ignore
+    if (window.navigator && "vibrate" in window.navigator) {
+      if (feedback === "light")  window.navigator.vibrate(10);
+      else if (feedback === "medium") window.navigator.vibrate([10, 20]);
+      else if (feedback === "heavy") window.navigator.vibrate([20, 40]);
+    }
+    // For Home Assistant companion app:
+    // @ts-ignore
+    if (window?.haptic) window.haptic(feedback);
+    // For HA frontend's fireHaptic
+    // @ts-ignore
+    if (typeof window?.fireEvent === "function") {
+      // Sends to global haptic handler in HA (where available)
+      try {
+        // @ts-ignore
+        window.fireEvent("haptic", feedback);
+      } catch {}
+    }
+  }
+
   private _setTemp(dir: 1|-1) {
+    this._haptic("light");
     const current = Number(this.getEntityAttr(this.config.climate_entity, "temperature")) || 19.0;
     const newTemp = Math.round((current + 0.5 * dir) * 2) / 2;
     this.hass.callService("climate", "set_temperature", {
@@ -300,8 +333,9 @@ export class FentonThermostatCard extends LitElement {
       temperature: newTemp
     });
   }
-  private _tap(script: string) {
-    this.hass.callService("script", "turn_on", { entity_id: script });
+  private _pressButton(entity_id: string) {
+    this._haptic("light");
+    this.hass.callService("input_button", "press", { entity_id });
   }
   private _moreInfo(entity: string) {
     const e = new CustomEvent("hass-more-info", {
@@ -405,10 +439,25 @@ export class FentonThermostatCard extends LitElement {
         <div class="bottom-bar">
           <span class="boost-label" style="align-items:center;display:flex;">BOOST</span>
           <div class="boost-btns-area">
-            <button class="boost-btn" @click=${() => this._tap(t.boost_30_script)}>30m</button>
-            <button class="boost-btn" boost="60" @click=${() => this._tap(t.boost_60_script)}>60m</button>
-            <button class="boost-btn" boost="hw" @click=${() => this._tap(t.hw_boost_script)}>HW</button>
-            <button class="boost-btn" boost="cancel" @click=${() => this._tap(t.cancel_script)}>X</button>
+            <button class="boost-btn"
+              @click=${() => this._pressButton(t.boost_30_button)}>
+              30m
+            </button>
+            <button class="boost-btn"
+              boost="60"
+              @click=${() => this._pressButton(t.boost_60_button)}>
+              60m
+            </button>
+            <button class="boost-btn"
+              boost="hw"
+              @click=${() => this._pressButton(t.hw_boost_button)}>
+              HW
+            </button>
+            <button class="boost-btn"
+              boost="cancel"
+              @click=${() => this._pressButton(t.cancel_boost_button)}>
+              X
+            </button>
           </div>
         </div>
       </div>
