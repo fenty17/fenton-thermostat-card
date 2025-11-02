@@ -318,10 +318,11 @@ export class FentonThermostatCard extends LitElement {
     return this.hass.states[entity]?.attributes[attr];
   }
 
-  // --------- HAPTIC v2024 -------
   private triggerHaptic(type: string) {
-    // Home Assistant standard: https://developers.home-assistant.io/docs/frontend/external-bus#trigger-haptic-haptic
-    window.dispatchEvent(new CustomEvent("haptic", { detail: { hapticType: type } }));
+    window.parent.postMessage(
+      { type: "haptic", hapticType: type },
+      window.location.origin
+    );
   }
 
   private _setTemp(dir: 1 | -1) {
