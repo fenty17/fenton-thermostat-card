@@ -318,6 +318,7 @@ export class FentonThermostatCard extends LitElement {
     return this.hass.states[entity]?.attributes[attr];
   }
 
+  // Haptic feedback: Use correct external-bus mechanism per HA docs
   private triggerHaptic(type: string) {
     window.parent.postMessage(
       { type: "haptic", hapticType: type },
