@@ -22,7 +22,7 @@ interface FentonThermostatCardConfig extends LovelaceCardConfig {
   cancel_boost_button: string;
 }
 
-@customElement('fenton-thermostat-card')
+@customElement("fenton-thermostat-card")
 export class FentonThermostatCard extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
   @state() private config!: FentonThermostatCardConfig;
@@ -117,8 +117,8 @@ export class FentonThermostatCard extends LitElement {
       flex-direction: column;
       align-items: stretch;
       justify-content: flex-start;
-      min-width: 130px;
-      min-height: 130px;
+      min-width: 150px !important;
+      min-height: 150px !important;
       margin-right: 20px;
     }
     .thermostat-controls {
@@ -127,8 +127,8 @@ export class FentonThermostatCard extends LitElement {
       aspect-ratio: 1/1;
       background: #232323;
       border-radius: 20px;
-      min-width: 120px;
-      min-height: 120px;
+      min-width: 150px !important;
+      min-height: 150px !important;
       max-width: 305px;
       max-height: 500px;
       margin: 0;
@@ -153,13 +153,11 @@ export class FentonThermostatCard extends LitElement {
       justify-content: center;
       margin: 0;
       padding: 0;
-      /* Make tap zones larger: */
       min-height: 56px;
       height: 19%;
     }
     .arrow-btn--up {
       top: 0;
-      /* Don't let the click/tap area overlap the target temp */
     }
     .arrow-btn--down {
       bottom: 0;
@@ -219,7 +217,7 @@ export class FentonThermostatCard extends LitElement {
       gap: 18px;
       width: 100%;
       padding-left: 16px;
-      padding-right: 10px; /* Padding from right edge */
+      padding-right: 10px;
       box-sizing: border-box;
     }
     .boost-btn {
@@ -282,8 +280,7 @@ export class FentonThermostatCard extends LitElement {
       }
     }
     @media (max-width: 768px) {
-      .thermostat-outer { min-width: 90px; }
-      .thermostat-controls { min-width: 90px; }
+      /* Don't override min-width/min-height of thermostat-outer or controls! */
     }
     @media (max-width: 600px) {
       .row {
@@ -292,22 +289,18 @@ export class FentonThermostatCard extends LitElement {
         gap: 6vw;
       }
       .status-side { padding-left: 7px;}
-      .thermostat-outer { min-width: 68px; }
       .sensor-label { font-size: 0.98rem; }
       .sensor-value { font-size: 1.09rem; }
       .boost-label { padding-left: 7px; font-size: 0.93rem;}
       .thermostat-controls {
-        min-width: 0;
         width: 100%;
         max-width: unset;
         aspect-ratio: 1/1;
-        min-height: 0;
         margin-right: 0;
       }
     }
     @media (max-width: 480px) {
       .card { padding: 2vw; }
-      .thermostat-outer { min-width: 56px;}
       .row { gap: 2vw; }
       .status-side { padding-left: 3vw;}
       .boost-label { padding-left: 3vw;}
@@ -325,26 +318,25 @@ export class FentonThermostatCard extends LitElement {
     return this.hass.states[entity]?.attributes[attr];
   }
 
-  private _haptic(type: "light" | "medium" | "heavy" = "light") {
-    // Standard Home Assistant haptic event (works on mobile app! web UI fallback too)
-    window.dispatchEvent(
-      new CustomEvent("hass-haptic", {
-        detail: { haptic: type }
-      })
-    );
+  // --------- HAPTIC v2024 -------
+  private triggerHaptic(type: string) {
+    // Home Assistant standard: https://developers.home-assistant.io/docs/frontend/external-bus#trigger-haptic-haptic
+    window.dispatchEvent(new CustomEvent("haptic", { detail: { hapticType: type } }));
   }
 
-  private _setTemp(dir: 1|-1) {
-    this._haptic("light");
-    const current = Number(this.getEntityAttr(this.config.climate_entity, "temperature")) || 19.0;
+  private _setTemp(dir: 1 | -1) {
+    this.triggerHaptic("light");
+    const current = Number(
+      this.getEntityAttr(this.config.climate_entity, "temperature")
+    ) || 19.0;
     const newTemp = Math.round((current + 0.5 * dir) * 2) / 2;
     this.hass.callService("climate", "set_temperature", {
       entity_id: this.config.climate_entity,
-      temperature: newTemp
+      temperature: newTemp,
     });
   }
   private _pressButton(entity_id: string) {
-    this._haptic("light");
+    this.triggerHaptic("light");
     this.hass.callService("input_button", "press", { entity_id });
   }
   private _moreInfo(entity: string) {
@@ -374,27 +366,27 @@ export class FentonThermostatCard extends LitElement {
       {
         label: "Current:",
         entity: t.temp_entity,
-        value: `${this.getEntityState(t.temp_entity)}°C`
+        value: `${this.getEntityState(t.temp_entity)}°C`,
       },
       {
         label: "Heating:",
         entity: t.heating_state_entity,
-        value: this.getEntityState(t.heating_state_entity)
+        value: this.getEntityState(t.heating_state_entity),
       },
       {
         label: "Hot Water:",
         entity: t.hotwater_state_entity,
-        value: this.getEntityState(t.hotwater_state_entity)
+        value: this.getEntityState(t.hotwater_state_entity),
       },
       {
         label: "Boost:",
         entity: t.boost_state_entity,
-        value: this.getEntityState(t.boost_state_entity)
+        value: this.getEntityState(t.boost_state_entity),
       },
       {
         label: "HW Boost:",
         entity: t.hw_boost_state_entity,
-        value: this.getEntityState(t.hw_boost_state_entity)
+        value: this.getEntityState(t.hw_boost_state_entity),
       },
     ];
     return html`
@@ -407,67 +399,91 @@ export class FentonThermostatCard extends LitElement {
                 style="--mdc-icon-size: 28px; color:${this._thermoIconColor()}"
                 title="Thermostat"
               ></ha-icon>
-              <span style="vertical-align:0.06em;white-space:nowrap;">${t.title ?? "Fenton Thermostat"}</span>
+              <span style="vertical-align:0.06em;white-space:nowrap;"
+                >${t.title ?? "Fenton Thermostat"}</span
+              >
             </div>
             <div class="sensor-list">
               ${sensors.map(
-                s => [
-                  html`<div class="sensor-label"
+                (s) => [
+                  html`<div
+                    class="sensor-label"
                     @click=${() => this._moreInfo(s.entity)}
                     title="Open details"
-                  >${s.label}</div>`,
-                  html`<div class="sensor-value"
+                  >
+                    ${s.label}
+                  </div>`,
+                  html`<div
+                    class="sensor-value"
                     @click=${() => this._moreInfo(s.entity)}
                     title="Open details"
-                  >${s.value}</div>`
+                  >
+                    ${s.value}
+                  </div>`,
                 ]
               )}
             </div>
           </div>
           <div class="thermostat-outer">
             <div class="thermostat-controls">
-              <button class="arrow-btn arrow-btn--up"
-                @click=${() => this._setTemp(1)} aria-label="Increase temperature">
+              <button
+                class="arrow-btn arrow-btn--up"
+                @click=${() => this._setTemp(1)}
+                aria-label="Increase temperature"
+              >
                 <ha-icon icon="mdi:chevron-up"></ha-icon>
               </button>
-              <div class="temp-target"
-                   tabindex="0"
-                   title="Show climate info"
-                   @click=${() => this._moreInfo(t.climate_entity)}
-                   @keydown=${(e: KeyboardEvent) => {
-                      if (e.key === "Enter" || e.key === " ") this._moreInfo(t.climate_entity)
-                   }}>
+              <div
+                class="temp-target"
+                tabindex="0"
+                title="Show climate info"
+                @click=${() => this._moreInfo(t.climate_entity)}
+                @keydown=${(e: KeyboardEvent) => {
+                  if (e.key === "Enter" || e.key === " ")
+                    this._moreInfo(t.climate_entity);
+                }}
+              >
                 ${currentTemp !== undefined
                   ? Number(currentTemp).toFixed(1)
                   : "19.0"}°C
               </div>
-              <button class="arrow-btn arrow-btn--down"
-                @click=${() => this._setTemp(-1)} aria-label="Decrease temperature">
+              <button
+                class="arrow-btn arrow-btn--down"
+                @click=${() => this._setTemp(-1)}
+                aria-label="Decrease temperature"
+              >
                 <ha-icon icon="mdi:chevron-down"></ha-icon>
               </button>
             </div>
           </div>
         </div>
         <div class="bottom-bar">
-          <span class="boost-label" style="align-items:center;display:flex;">BOOST</span>
+          <span class="boost-label" style="align-items:center;display:flex;"
+            >BOOST</span
+          >
           <div class="boost-btns-area">
-            <button class="boost-btn"
-              @click=${() => this._pressButton(t.boost_30_button)}>
+            <button class="boost-btn" @click=${() => this._pressButton(t.boost_30_button)}>
               30m
             </button>
-            <button class="boost-btn"
+            <button
+              class="boost-btn"
               boost="60"
-              @click=${() => this._pressButton(t.boost_60_button)}>
+              @click=${() => this._pressButton(t.boost_60_button)}
+            >
               60m
             </button>
-            <button class="boost-btn"
+            <button
+              class="boost-btn"
               boost="hw"
-              @click=${() => this._pressButton(t.hw_boost_button)}>
+              @click=${() => this._pressButton(t.hw_boost_button)}
+            >
               HW
             </button>
-            <button class="boost-btn"
+            <button
+              class="boost-btn"
               boost="cancel"
-              @click=${() => this._pressButton(t.cancel_boost_button)}>
+              @click=${() => this._pressButton(t.cancel_boost_button)}
+            >
               X
             </button>
           </div>
@@ -479,6 +495,6 @@ export class FentonThermostatCard extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'fenton-thermostat-card': FentonThermostatCard;
+    "fenton-thermostat-card": FentonThermostatCard;
   }
 }
