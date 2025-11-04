@@ -5,9 +5,11 @@ interface LovelaceCardConfig {
   type: string;
   [prop: string]: any;
 }
+
 interface HomeAssistant {
   [prop: string]: any;
 }
+
 interface FentonThermostatCardConfig extends LovelaceCardConfig {
   title?: string;
   climate_entity: string;
@@ -33,11 +35,12 @@ export class FentonThermostatCard extends LitElement {
       width: 100%;
       max-width: 100vw;
     }
+
     .card {
       background: #181c2b;
       color: #fff;
       border-radius: 20px;
-      padding: 18px 18px 16px 18px;
+      padding: 18px;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -48,6 +51,7 @@ export class FentonThermostatCard extends LitElement {
       max-width: 100%;
       overflow: hidden;
     }
+
     .row {
       display: flex;
       flex-direction: row;
@@ -56,6 +60,7 @@ export class FentonThermostatCard extends LitElement {
       gap: 12px;
       min-width: 0;
     }
+
     .status-side {
       flex: 1;
       display: flex;
@@ -67,6 +72,7 @@ export class FentonThermostatCard extends LitElement {
       margin-top: 6px;
       justify-content: flex-start;
     }
+
     .sensor-list {
       display: grid;
       grid-template-columns: max-content 1fr;
@@ -77,40 +83,48 @@ export class FentonThermostatCard extends LitElement {
       margin-top: 4px;
       margin-bottom: 0;
     }
+
     .sensor-label {
       text-align: left;
       font-weight: 500;
       opacity: 0.93;
       cursor: pointer;
-      padding: 2px 0 2px 0;
+      padding: 2px 0;
       border-radius: 8px 0 0 8px;
       user-select: none;
       transition: background 0.17s;
     }
-    .sensor-label:active, .sensor-label:hover {
-      background: rgba(255,255,255,0.055);
+
+    .sensor-label:active,
+    .sensor-label:hover {
+      background: rgba(255, 255, 255, 0.055);
     }
+
     .sensor-value {
       text-align: left;
-      padding: 2px 0 2px 0;
+      padding: 2px 0;
       border-radius: 0 8px 8px 0;
       font-weight: 600;
       cursor: pointer;
       user-select: none;
       transition: background 0.17s;
     }
-    .sensor-value:active, .sensor-value:hover {
-      background: rgba(255,255,255,0.045);
+
+    .sensor-value:active,
+    .sensor-value:hover {
+      background: rgba(255, 255, 255, 0.045);
     }
+
     .top-title-row {
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size:1.18rem;
-      font-weight:bold;
+      font-size: 1.18rem;
+      font-weight: bold;
       margin-bottom: 8px;
       min-width: 0;
     }
+
     .thermostat-outer {
       flex: 0 0 auto;
       display: flex;
@@ -121,6 +135,7 @@ export class FentonThermostatCard extends LitElement {
       min-height: 150px !important;
       margin-right: 20px;
     }
+
     .thermostat-controls {
       position: relative;
       width: 100%;
@@ -136,9 +151,11 @@ export class FentonThermostatCard extends LitElement {
       overflow: hidden;
       display: block;
     }
+
     .arrow-btn {
       position: absolute;
-      left: 0; right: 0;
+      left: 0;
+      right: 0;
       width: 100%;
       color: #fff;
       background: none;
@@ -156,15 +173,20 @@ export class FentonThermostatCard extends LitElement {
       min-height: 56px;
       height: 19%;
     }
+
     .arrow-btn--up {
       top: 0;
     }
+
     .arrow-btn--down {
       bottom: 0;
     }
-    .arrow-btn:active, .arrow-btn:focus {
+
+    .arrow-btn:active,
+    .arrow-btn:focus {
       color: #ffe082;
     }
+
     .temp-target {
       position: absolute;
       left: 0;
@@ -187,6 +209,7 @@ export class FentonThermostatCard extends LitElement {
       z-index: 2;
       margin: 0;
     }
+
     .bottom-bar {
       display: grid;
       grid-template-columns: max-content 1fr;
@@ -197,6 +220,7 @@ export class FentonThermostatCard extends LitElement {
       gap: 0;
       position: relative;
     }
+
     .boost-label {
       font-size: 1.07rem;
       font-weight: 500;
@@ -211,6 +235,7 @@ export class FentonThermostatCard extends LitElement {
       padding-left: 16px;
       flex: 0 0 auto;
     }
+
     .boost-btns-area {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -220,6 +245,7 @@ export class FentonThermostatCard extends LitElement {
       padding-right: 10px;
       box-sizing: border-box;
     }
+
     .boost-btn {
       background: #353535;
       color: #ffe082;
@@ -241,28 +267,42 @@ export class FentonThermostatCard extends LitElement {
       word-break: keep-all;
       width: 100%;
     }
-    .boost-btn[boost="60"] { color: orange;}
-    .boost-btn[boost="hw"] { color: darkorange;}
+
+    .boost-btn[boost="60"] {
+      color: orange;
+    }
+
+    .boost-btn[boost="hw"] {
+      color: darkorange;
+    }
+
     .boost-btn[boost="cancel"] {
       color: #fa3333;
       background: none;
       border: 2px solid #fa3333;
     }
+
     @media (max-width: 670px) {
       .boost-btns-area {
         gap: 10px;
         padding-right: 5px;
       }
     }
+
     @media (max-width: 570px) {
       .boost-btns-area {
         gap: 6px;
         padding-left: 7px;
         padding-right: 1vw;
       }
-      .card { padding: 2vw; }
-      .bottom-bar { font-size: 0.95rem;}
+      .card {
+        padding: 2vw;
+      }
+      .bottom-bar {
+        font-size: 0.95rem;
+      }
     }
+
     @media (max-width: 520px) {
       .boost-btns-area {
         grid-template-columns: repeat(2, 1fr);
@@ -271,6 +311,7 @@ export class FentonThermostatCard extends LitElement {
         padding-right: 3px;
       }
     }
+
     @media (max-width: 400px) {
       .boost-btns-area {
         grid-template-columns: 1fr;
@@ -279,19 +320,30 @@ export class FentonThermostatCard extends LitElement {
         padding-right: 2px;
       }
     }
+
     @media (max-width: 768px) {
-      /* Don't override min-width/min-height of thermostat-outer or controls! */
+      /* Intentionally do not override min sizes */
     }
+
     @media (max-width: 600px) {
       .row {
         flex-direction: row;
         align-items: flex-start;
         gap: 6vw;
       }
-      .status-side { padding-left: 7px;}
-      .sensor-label { font-size: 0.98rem; }
-      .sensor-value { font-size: 1.09rem; }
-      .boost-label { padding-left: 7px; font-size: 0.93rem;}
+      .status-side {
+        padding-left: 7px;
+      }
+      .sensor-label {
+        font-size: 0.98rem;
+      }
+      .sensor-value {
+        font-size: 1.09rem;
+      }
+      .boost-label {
+        padding-left: 7px;
+        font-size: 0.93rem;
+      }
       .thermostat-controls {
         width: 100%;
         max-width: unset;
@@ -299,11 +351,20 @@ export class FentonThermostatCard extends LitElement {
         margin-right: 0;
       }
     }
+
     @media (max-width: 480px) {
-      .card { padding: 2vw; }
-      .row { gap: 2vw; }
-      .status-side { padding-left: 3vw;}
-      .boost-label { padding-left: 3vw;}
+      .card {
+        padding: 2vw;
+      }
+      .row {
+        gap: 2vw;
+      }
+      .status-side {
+        padding-left: 3vw;
+      }
+      .boost-label {
+        padding-left: 3vw;
+      }
     }
   `;
 
@@ -314,33 +375,70 @@ export class FentonThermostatCard extends LitElement {
   getEntityState(entity: string) {
     return this.hass.states[entity]?.state ?? "—";
   }
+
   getEntityAttr(entity: string, attr: string) {
     return this.hass.states[entity]?.attributes[attr];
   }
 
-  // Haptic feedback: Use correct external-bus mechanism per HA docs
+  // Robust haptic: external-bus + fallbacks
   private triggerHaptic(type: string) {
-    window.parent.postMessage(
-      { type: "haptic", hapticType: type },
-      window.location.origin
-    );
+    try {
+      // Primary: external bus via postMessage
+      // Use "" to avoid origin mismatches inside companion apps/proxy setups.
+      window.parent.postMessage({ type: "haptic", hapticType: type }, "");
+    } catch (_) {
+      // ignore
+    }
+
+    // Fallback 1: modern DOM event shape
+    try {
+      window.dispatchEvent(new CustomEvent("haptic", { detail: { hapticType: type } }));
+    } catch (_) {
+      // ignore
+    }
+
+    // Fallback 2: legacy DOM event shape (some older listeners expect the raw string)
+    try {
+      window.dispatchEvent(new CustomEvent("haptic", { detail: type }));
+    } catch (_) {
+      // ignore
+    }
+
+    // Last resort: Web Vibration API (not supported on iOS Safari)
+    try {
+      if (navigator.vibrate) {
+        const map: Record<string, number | number[]> = {
+          light: 10,
+          selection: 10,
+          medium: 20,
+          heavy: 30,
+          success: [8, 14, 8],
+          warning: [30, 30, 30],
+          error: [50, 30, 50],
+        };
+        const pattern = map[type] ?? 10;
+        navigator.vibrate(pattern);
+      }
+    } catch (_) {
+      // ignore
+    }
   }
 
   private _setTemp(dir: 1 | -1) {
     this.triggerHaptic("light");
-    const current = Number(
-      this.getEntityAttr(this.config.climate_entity, "temperature")
-    ) || 19.0;
+    const current = Number(this.getEntityAttr(this.config.climate_entity, "temperature")) || 19.0;
     const newTemp = Math.round((current + 0.5 * dir) * 2) / 2;
     this.hass.callService("climate", "set_temperature", {
       entity_id: this.config.climate_entity,
       temperature: newTemp,
     });
   }
+
   private _pressButton(entity_id: string) {
     this.triggerHaptic("light");
     this.hass.callService("input_button", "press", { entity_id });
   }
+
   private _moreInfo(entity: string) {
     const e = new CustomEvent("hass-more-info", {
       detail: { entityId: entity },
@@ -349,13 +447,16 @@ export class FentonThermostatCard extends LitElement {
     });
     this.dispatchEvent(e);
   }
+
   private _heatingOn() {
     const state = (this.getEntityState(this.config.heating_state_entity) ?? "").toLowerCase();
     return state === "on" || state === "heat" || state === "heating";
   }
+
   private _thermoIcon() {
     return this._heatingOn() ? "mdi:radiator" : "mdi:radiator-disabled";
   }
+
   private _thermoIconColor() {
     return this._heatingOn() ? "orange" : "#888";
   }
@@ -365,31 +466,11 @@ export class FentonThermostatCard extends LitElement {
     const t = this.config;
     const currentTemp = this.getEntityAttr(t.climate_entity, "temperature");
     const sensors = [
-      {
-        label: "Current:",
-        entity: t.temp_entity,
-        value: `${this.getEntityState(t.temp_entity)}°C`,
-      },
-      {
-        label: "Heating:",
-        entity: t.heating_state_entity,
-        value: this.getEntityState(t.heating_state_entity),
-      },
-      {
-        label: "Hot Water:",
-        entity: t.hotwater_state_entity,
-        value: this.getEntityState(t.hotwater_state_entity),
-      },
-      {
-        label: "Boost:",
-        entity: t.boost_state_entity,
-        value: this.getEntityState(t.boost_state_entity),
-      },
-      {
-        label: "HW Boost:",
-        entity: t.hw_boost_state_entity,
-        value: this.getEntityState(t.hw_boost_state_entity),
-      },
+      { label: "Current:", entity: t.temp_entity, value: `${this.getEntityState(t.temp_entity)}°C` },
+      { label: "Heating:", entity: t.heating_state_entity, value: this.getEntityState(t.heating_state_entity) },
+      { label: "Hot Water:", entity: t.hotwater_state_entity, value: this.getEntityState(t.hotwater_state_entity) },
+      { label: "Boost:", entity: t.boost_state_entity, value: this.getEntityState(t.boost_state_entity) },
+      { label: "HW Boost:", entity: t.hw_boost_state_entity, value: this.getEntityState(t.hw_boost_state_entity) },
     ];
     return html`
       <div class="card">
@@ -401,35 +482,30 @@ export class FentonThermostatCard extends LitElement {
                 style="--mdc-icon-size: 28px; color:${this._thermoIconColor()}"
                 title="Thermostat"
               ></ha-icon>
-              <span style="vertical-align:0.06em;white-space:nowrap;"
-                >${t.title ?? "Fenton Thermostat"}</span
-              >
+              <span style="vertical-align:0.06em;white-space:nowrap;">
+                ${t.title ?? "Fenton Thermostat"}
+              </span>
             </div>
             <div class="sensor-list">
-              ${sensors.map(
-                (s) => [
-                  html`<div
-                    class="sensor-label"
-                    @click=${() => this._moreInfo(s.entity)}
-                    title="Open details"
-                  >
+              ${sensors.map((s) => [
+                html`
+                  <div class="sensor-label" @click=${() => this._moreInfo(s.entity)} title="Open details">
                     ${s.label}
-                  </div>`,
-                  html`<div
-                    class="sensor-value"
-                    @click=${() => this._moreInfo(s.entity)}
-                    title="Open details"
-                  >
+                  </div>
+                `,
+                html`
+                  <div class="sensor-value" @click=${() => this._moreInfo(s.entity)} title="Open details">
                     ${s.value}
-                  </div>`,
-                ]
-              )}
+                  </div>
+                `,
+              ])}
             </div>
           </div>
           <div class="thermostat-outer">
             <div class="thermostat-controls">
               <button
                 class="arrow-btn arrow-btn--up"
+                @pointerdown=${() => this.triggerHaptic("selection")}
                 @click=${() => this._setTemp(1)}
                 aria-label="Increase temperature"
               >
@@ -441,16 +517,14 @@ export class FentonThermostatCard extends LitElement {
                 title="Show climate info"
                 @click=${() => this._moreInfo(t.climate_entity)}
                 @keydown=${(e: KeyboardEvent) => {
-                  if (e.key === "Enter" || e.key === " ")
-                    this._moreInfo(t.climate_entity);
+                  if (e.key === "Enter" || e.key === " ") this._moreInfo(t.climate_entity);
                 }}
               >
-                ${currentTemp !== undefined
-                  ? Number(currentTemp).toFixed(1)
-                  : "19.0"}°C
+                ${currentTemp !== undefined ? Number(currentTemp).toFixed(1) : "19.0"}°C
               </div>
               <button
                 class="arrow-btn arrow-btn--down"
+                @pointerdown=${() => this.triggerHaptic("selection")}
                 @click=${() => this._setTemp(-1)}
                 aria-label="Decrease temperature"
               >
@@ -460,34 +534,12 @@ export class FentonThermostatCard extends LitElement {
           </div>
         </div>
         <div class="bottom-bar">
-          <span class="boost-label" style="align-items:center;display:flex;"
-            >BOOST</span
-          >
+          <span class="boost-label" style="align-items:center;display:flex;">BOOST</span>
           <div class="boost-btns-area">
-            <button class="boost-btn" @click=${() => this._pressButton(t.boost_30_button)}>
-              30m
-            </button>
-            <button
-              class="boost-btn"
-              boost="60"
-              @click=${() => this._pressButton(t.boost_60_button)}
-            >
-              60m
-            </button>
-            <button
-              class="boost-btn"
-              boost="hw"
-              @click=${() => this._pressButton(t.hw_boost_button)}
-            >
-              HW
-            </button>
-            <button
-              class="boost-btn"
-              boost="cancel"
-              @click=${() => this._pressButton(t.cancel_boost_button)}
-            >
-              X
-            </button>
+            <button class="boost-btn" @pointerdown=${() => this.triggerHaptic("selection")} @click=${() => this._pressButton(t.boost_30_button)}>30m</button>
+            <button class="boost-btn" boost="60" @pointerdown=${() => this.triggerHaptic("selection")} @click=${() => this._pressButton(t.boost_60_button)}>60m</button>
+            <button class="boost-btn" boost="hw" @pointerdown=${() => this.triggerHaptic("selection")} @click=${() => this._pressButton(t.hw_boost_button)}>HW</button>
+            <button class="boost-btn" boost="cancel" @pointerdown=${() => this.triggerHaptic("selection")} @click=${() => this._pressButton(t.cancel_boost_button)}>X</button>
           </div>
         </div>
       </div>
